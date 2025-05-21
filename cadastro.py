@@ -1,5 +1,5 @@
 print('\033[34mAtividade CRUD\033[m')
-
+import re
 
 def apresenteSe ():
     print('+-------------------------------------------------------------+')
@@ -52,22 +52,27 @@ def ondeEsta(nom, agd):
     return [False, inicio]
 
 def cadastrar(agd):
+    nome_regex = re.compile(r'^[A-Za-zÀ-ÿ]+(?:\s[A-Za-zÀ-ÿ]+)+$')
+    telefone_regex = re.compile(r'^\(?(\d{2})\)?\s?\d{4}-?\d{4}$') 
+    celular_regex = re.compile(r'^\(?(\d{2})\)?\s?9\d{4}-?\d{4}$')
+    email_regex = re.compile(r'^[\w\.-]+@[\w\.-]+\.\w{2,}$')
+
     while True:
         nome = input('Digite seu nome (ou CANCELAR para desistir): ').strip()
         if nome.upper() == 'CANCELAR':
             return
-
-        if len(nome.split()) < 3 or not all(palavra.isalpha() for palavra in nome.replace('áéíóúâêôãõçÁÉÍÓÚÂÊÔÃÕÇ', '').split()):
-            print("Nome inválido. Digite nome completo com apenas letras.")
+        
+        if not nome_regex.match(nome):
+            print("Nome inválido. Digite nome completo (apenas letras e espaços).")
             continue
 
-        achou, posicao = ondeEsta(nome, [p[0] for p in agd])
+        achou, posicao = ondeEsta(nome, [p[0] for p in agd])  
         if achou:
             print("Nome já cadastrado - digite outro.")
         else:
             break
 
-    while True:
+    while True:    
         aniversario = input('Data de aniversário (formato DD/MM): ').strip()
     
         if len(aniversario) == 5 and aniversario[2] == '/':
@@ -78,24 +83,25 @@ def cadastrar(agd):
                 dia = int(dia)
                 mes = int(mes)
             
-            if mes < 1 or mes > 12:
-                print('Mês inválido.')
-                continue
-            
-            if mes == 2 and dia > 28:
-                print('Tente novamente, fevereiro vai até 28.')
-                continue
-            elif mes in [4, 6, 9, 11] and dia > 30:
-                print('Tente novamente, esse mês vai até 30.')
-                continue
-            elif dia < 1 or dia > 31:
-                print('Dia inválido.')
-                continue
-            break
-
+                if mes < 1 or mes > 12:
+                    print('Mês inválido.')
+                    continue
+                
+                if mes == 2 and dia > 28:
+                    print('Tente novamente, fevereiro vai até dia 28.')
+                    continue
+                elif mes in [4, 6, 9, 11] and dia > 30:
+                    print('Tente novamente, esse mês vai até dia 30.')
+                    continue
+                elif dia < 1 or dia > 31:
+                    print('Dia inválido.')
+                    continue
+                break
+            else:
+                print("Dia ou mês não são números.")
         else:
             print("Data inválida. Digite no formato DD/MM e com valores reais.")
-   
+
     while True:
         endereco = input('Endereço: ').strip()
         if any(c.isalpha() for c in endereco) and any(c.isdigit() for c in endereco):
@@ -104,25 +110,35 @@ def cadastrar(agd):
             print("Endereço inválido. Deve conter letras e números.")
 
     while True:
-        telefone = input('Telefone fixo (somente números, com 10 ou 8 dígitos): ').strip()
-        if telefone.isdigit() and len(telefone) in [8, 10]:
-            break
+        telefone = input('Telefone fixo (com DDD obrigatório): ').strip()
+        match = telefone_regex.match(telefone)
+        if match:
+            ddd = int(match.group(1))
+            if 11 <= ddd <= 99:
+                break
+            else:
+                print('DDD inválido')
         else:
-            print('Número inválido. Tente novamente.')
+            print('Número inválido. Use o formato com DDD e 8 dígitos.')
 
     while True:
-        celular = input('Celular (com DDD obrigatório): ').strip()
-        if celular.isdigit() and len(celular) == 11 and celular[2] == '9':
-            break
+        celular = input('Celular (com DDD e 9 dígitos): ').strip()
+        match = celular_regex.match(celular)
+        if match:
+            ddd = int(match.group(1))
+            if 11 <= ddd <= 99:
+                break
+            else:
+                print('DDD inválido.')
         else:
-            print('Número inválido. Deve ter 11 dígitos e começar com 9 após o DDD.')
-
+            print('Número inválido. Deve conter DDD e 9 dígitos (começando com 9).')
+        
     while True:
         email = input('Email: ').strip()
-        if "@" in email and "." in email and email.index("@") < email.rindex("."):
+        if email_regex.match(email):
             break
         else:
-            print("Email inválido. Verifique o formato.")
+            print('Email inválido. Tente novamente.')
 
     contato = [nome, aniversario, endereco, telefone, celular, email]
     agd.insert(posicao, contato)
