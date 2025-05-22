@@ -198,7 +198,8 @@ def excluir(agd):
             confirmar = input('Tem certeza que deseja excluir este contato? [S/N]: ').strip().upper()
             if confirmar == 'S':
                 del agd[posicao]
-                print('Contato excluído com sucesso')
+                print()
+                print('\033[33mContato excluído com sucesso\033[m')
             elif confirmar == 'N':
                 print('Exclusão cancelada')
             else:
