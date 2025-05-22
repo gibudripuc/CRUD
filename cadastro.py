@@ -146,3 +146,98 @@ def cadastrar(agd):
     agd.insert(posicao, contato)
 
     print("Cadastro realizado com sucesso!")
+
+
+def listar(agd):
+    if not agd:
+        print('Nenhum contato cadastrado')
+    else:
+        print('Contatos cadastrados:')
+        for contato in agd:
+            print(f"Nome: {contato[0]}")
+            print(f"Aniversário: {contato[1]}")
+            print(f"Endereço: {contato[2]}")
+            print(f"Telefone fixo: {contato[3]}")
+            print(f"Celular: {contato[4]}")
+            print(f"Email: {contato[5]}")
+            print("-" * 30)
+
+
+def excluir(agd):
+    if not agd:
+        print("Agenda vazia. Nenhum contato para excluir.")
+        return
+
+    nomes = [contato[0] for contato in agd]
+
+    while True:
+        nome = input("Digite o nome a ser excluído (ou digite CANCELA para desistir): ").strip()
+
+        if nome.upper() == "CANCELA":
+            print("Exclusão cancelada pelo usuário.")
+            return
+
+        achou, posicao = ondeEsta(nome, nomes)
+
+        if achou:
+            contato = agd[posicao]
+            print("\nContato encontrado:")
+            print("Nome:", contato[0])
+            print("Aniversário:", contato[1])
+            print("Endereço:", contato[2])
+            print("Telefone:", contato[3])
+            print("Celular:", contato[4])
+            print("Email:", contato[5])
+
+            confirmar = input("Tem certeza que deseja excluir este contato? (s/n): ").strip().lower()
+            if confirmar == 's':
+                del agd[posicao]
+                print("Contato excluído com sucesso.")
+            else:
+                print("Exclusão cancelada.")
+            return
+        else:
+            print("Contato não encontrado. Tente novamente.")
+
+
+apresenteSe()
+
+agenda = []
+menu = ['Cadastrar Contato',
+        'Procurar Contato',
+        'Atualizar Contato',
+        'Listar Contatos',
+        'Excluir Contato',
+        'Sair do Programa']
+
+while True:
+    try:
+        opcao = int(opcaoEscolhida(menu))
+    except ValueError:
+        print("Por favor, digite um número válido.")
+        continue
+
+    if opcao == 1:
+        cadastrar(agenda)
+    elif opcao == 4:
+        listar(agenda)
+    elif opcao == 5:
+        excluir(agenda)
+    elif opcao == 6:
+        break
+    else:
+        print("Opção inválida. Tente novamente.")
+
+    print()
+
+print('PROGRAMA ENCERRADO COM SUCESSO!')
+
+
+
+
+
+
+
+
+
+
