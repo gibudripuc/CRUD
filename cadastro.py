@@ -1,8 +1,10 @@
-print('\033[34mAtividade CRUD\033[m')
 import re
+print()
+print('\033[34mAtividade CRUD\033[m')
+print()
 
 def apresenteSe ():
-    print('+-------------------------------------------------------------+')
+    print('\033[34m+-------------------------------------------------------------+')
     print('|                                                             |')
     print('| AGENDA PESSOAL DE ANIVERSÁRIOS E FORMAS DE CONTATAR PESSOAS |')
     print('|                                                             |')
@@ -10,7 +12,7 @@ def apresenteSe ():
     print('| Matheus Barbosa                  RA:                        |')
     print('| Versão 2.0 de 20/maio/2025                                  |')
     print('|                                                             |')
-    print('+-------------------------------------------------------------+')
+    print('+-------------------------------------------------------------+\033[m')
 
 
 
