@@ -146,15 +146,19 @@ def cadastrar(agd):
     contato = [nome, aniversario, endereco, telefone, celular, email]
     agd.insert(posicao, contato)
 
-    print('Cadastro realizado com sucesso!')
+    print()
+    print('\033[33mCadastro realizado com sucesso!\033[m')
+
 
 
 def listar(agd):
     if not agd:
         print('Nenhum contato cadastrado')
     else:
+        print()
         print('Contatos cadastrados:')
         for contato in agd:
+            print("-" * 30)
             print(f"Nome: {contato[0]}")
             print(f"Aniversário: {contato[1]}")
             print(f"Endereço: {contato[2]}")
@@ -172,6 +176,7 @@ def excluir(agd):
     nomes = [contato[0] for contato in agd]
 
     while True:
+        print(nomes)
         nome = input('Digite o nome a ser excluído (ou digite CANCELA para desistir): ').strip()
 
         if nome.upper() == "CANCELA":
@@ -190,15 +195,17 @@ def excluir(agd):
             print("Celular:", contato[4])
             print("Email:", contato[5])
 
-            confirmar = input('Tem certeza que deseja excluir este contato? (s/n): ').strip().lower()
-            if confirmar == 's':
+            confirmar = input('Tem certeza que deseja excluir este contato? [S/N]: ').strip().upper()
+            if confirmar == 'S':
                 del agd[posicao]
-                print("Contato excluído com sucesso.")
+                print('Contato excluído com sucesso')
+            elif confirmar == 'N':
+                print('Exclusão cancelada')
             else:
-                print("Exclusão cancelada.")
+                print('Usuário não digitou "S" e não digitou "N", o programa entendeu como exclusão cancelada')
             return
         else:
-            print("Contato não encontrado. Tente novamente.")
+            print('Contato não encontrado. Por favor, tente novamente')
 
 
 apresenteSe()
