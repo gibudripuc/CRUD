@@ -1,6 +1,6 @@
 import re
 print()
-print('\033[34mAtividade CRUD\033[m')
+print('Atividade CRUD')
 print()
 
 def apresenteSe ():
@@ -20,7 +20,7 @@ def umTexto (solicitacao, mensagem, valido):
     while True:
         txt=input(solicitacao)
         if txt not in valido:
-            print(mensagem,'- Favor redigitar...')
+            print(mensagem,' - Favor redigitar.')
         else:
             break
     return txt
@@ -60,17 +60,18 @@ def cadastrar(agd):
     email_regex = re.compile(r'^[\w\.-]+@[\w\.-]+\.\w{2,}$')
 
     while True:
-        nome = input('Digite seu nome (ou CANCELAR para desistir): ').strip()
+        nome = input('Digite nome (ou CANCELAR para desistir): ').strip()
         if nome.upper() == 'CANCELAR':
+            print('Opção cancelada!')
             return
         
         if not nome_regex.match(nome):
-            print("Nome inválido. Digite nome completo (apenas letras e espaços).")
+            print('Nome inválido. Por favor, digite um nome completo (apenas letras e espaços)')
             continue
 
         achou, posicao = ondeEsta(nome, [p[0] for p in agd])  
         if achou:
-            print("Nome já cadastrado - digite outro.")
+            print('Nome já cadastrado. Por favor, digite outro')
         else:
             break
 
@@ -93,23 +94,23 @@ def cadastrar(agd):
                     print('Tente novamente, fevereiro vai até dia 28.')
                     continue
                 elif mes in [4, 6, 9, 11] and dia > 30:
-                    print('Tente novamente, esse mês vai até dia 30.')
+                    print('Tente novamente, o mês escolhido vai até dia 30.')
                     continue
                 elif dia < 1 or dia > 31:
                     print('Dia inválido.')
                     continue
                 break
             else:
-                print("Dia ou mês não são números.")
+                print('Dia ou mês não são números')
         else:
-            print("Data inválida. Digite no formato DD/MM e com valores reais.")
+            print('Data inválida. Por favor, digite no formato DD/MM e com valores reais')
 
     while True:
         endereco = input('Endereço: ').strip()
         if any(c.isalpha() for c in endereco) and any(c.isdigit() for c in endereco):
             break
         else:
-            print("Endereço inválido. Deve conter letras e números.")
+            print('Endereço inválido. Deve conter letras e números')
 
     while True:
         telefone = input('Telefone fixo (com DDD obrigatório): ').strip()
@@ -121,10 +122,10 @@ def cadastrar(agd):
             else:
                 print('DDD inválido')
         else:
-            print('Número inválido. Use o formato com DDD e 8 dígitos.')
+            print('Número inválido. Deve conter DDD e 8 dígitos')
 
     while True:
-        celular = input('Celular (com DDD e 9 dígitos): ').strip()
+        celular = input('Celular (com DDD obrigatório): ').strip()
         match = celular_regex.match(celular)
         if match:
             ddd = int(match.group(1))
@@ -140,20 +141,24 @@ def cadastrar(agd):
         if email_regex.match(email):
             break
         else:
-            print('Email inválido. Tente novamente.')
+            print('Email inválido')
 
     contato = [nome, aniversario, endereco, telefone, celular, email]
     agd.insert(posicao, contato)
 
-    print("Cadastro realizado com sucesso!")
+    print()
+    print('\033[33mCadastro realizado com sucesso!\033[m')
+
 
 
 def listar(agd):
     if not agd:
         print('Nenhum contato cadastrado')
     else:
+        print()
         print('Contatos cadastrados:')
         for contato in agd:
+            print("-" * 30)
             print(f"Nome: {contato[0]}")
             print(f"Aniversário: {contato[1]}")
             print(f"Endereço: {contato[2]}")
@@ -165,16 +170,17 @@ def listar(agd):
 
 def excluir(agd):
     if not agd:
-        print("Agenda vazia. Nenhum contato para excluir.")
+        print('Agenda vazia --> Nenhum contato para excluir')
         return
 
     nomes = [contato[0] for contato in agd]
 
     while True:
-        nome = input("Digite o nome a ser excluído (ou digite CANCELA para desistir): ").strip()
+        print(nomes)
+        nome = input('Digite o nome a ser excluído (ou digite CANCELA para desistir): ').strip()
 
         if nome.upper() == "CANCELA":
-            print("Exclusão cancelada pelo usuário.")
+            print('Exclusão cancelada pelo usuário')
             return
 
         achou, posicao = ondeEsta(nome, nomes)
@@ -189,15 +195,17 @@ def excluir(agd):
             print("Celular:", contato[4])
             print("Email:", contato[5])
 
-            confirmar = input("Tem certeza que deseja excluir este contato? (s/n): ").strip().lower()
-            if confirmar == 's':
+            confirmar = input('Tem certeza que deseja excluir este contato? [S/N]: ').strip().upper()
+            if confirmar == 'S':
                 del agd[posicao]
-                print("Contato excluído com sucesso.")
+                print('Contato excluído com sucesso')
+            elif confirmar == 'N':
+                print('Exclusão cancelada')
             else:
-                print("Exclusão cancelada.")
+                print('Usuário não digitou "S" e não digitou "N", o programa entendeu como exclusão cancelada')
             return
         else:
-            print("Contato não encontrado. Tente novamente.")
+            print('Contato não encontrado. Por favor, tente novamente')
 
 
 apresenteSe()
@@ -214,7 +222,7 @@ while True:
     try:
         opcao = int(opcaoEscolhida(menu))
     except ValueError:
-        print("Por favor, digite um número válido.")
+        print('Por favor, digite um número válido')
         continue
 
     if opcao == 1:
@@ -226,11 +234,11 @@ while True:
     elif opcao == 6:
         break
     else:
-        print("Opção inválida. Tente novamente.")
+        print('Opção inválida. Por favor, tente novamente')
 
     print()
 
-print('PROGRAMA ENCERRADO COM SUCESSO!')
+print('\033[34mPrograma encerrado com sucesso! Até mais :)')
 
 
 
