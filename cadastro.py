@@ -1,11 +1,11 @@
 import re
 
 print()
-print('Atividade CRUD')
+print('ATIVIDADE CRUD')
 print()
 
 def apresenteSe ():
-    print('[+------------------------------------------------------------+')
+    print('+-------------------------------------------------------------+')
     print('|                                                             |')
     print('| AGENDA PESSOAL DE ANIVERSÁRIOS E FORMAS DE CONTATAR PESSOAS |')
     print('|                                                             |')
@@ -55,16 +55,15 @@ def ondeEsta(nom, agd):
     return [False, inicio]
 
 def cadastrar(agd):
-    nome_regex = re.compile('^[A-Z][a-z]*(?: (?:[A-Z]|[a-z])[a-z]*)*$')
-    telefone_regex = re.compile(r'^\(?(\d{2})\)?\s?\d{4}-?\d{4}$') 
+    nome_regex = re.compile(r'^[A-Z][a-z]*(?: (?:[A-Z]|[a-z])[a-z]*)*$')
+    telefone_regex = re.compile(r'^(?:\([1-9]{2}\) )?9?[0-9]{4}-[0-9]{4}$') 
     celular_regex = re.compile(r'^\(?(\d{2})\)?\s?9\d{4}-?\d{4}$')
     email_regex = re.compile(r'^[\w\.-]+@[\w\.-]+\.\w{2,}$')
 
     while True:
         nome = input('Digite nome (ou CANCELAR para desistir): ').strip()
         if nome.upper() == 'CANCELAR':
-            print()
-            print('\033[33mOpção cancelada!\033[m')
+            print('\n\033[33mOpção cancelada!\033[m')
             return
         
         if not nome_regex.match(nome):
@@ -115,16 +114,12 @@ def cadastrar(agd):
             print('Endereço inválido. Deve conter letras e números')
 
     while True:
-        telefone = input('Telefone fixo (com DDD obrigatório): ').strip()
+        telefone = input('Telefone fixo: ').strip()
         match = telefone_regex.match(telefone)
         if match:
-            ddd = int(match.group(1))
-            if 11 <= ddd <= 99:
-                break
-            else:
-                print('DDD inválido')
+            break
         else:
-            print('Número inválido. Deve conter DDD e 8 dígitos')
+            print('Número inválido. Utilieze --> () caso opte por colocar DDD e uso obrigatório de hífen --> -')
 
     while True:
         celular = input('Celular (com DDD obrigatório): ').strip()
@@ -159,8 +154,7 @@ def procurar(agd):
     
     nome = input('Digite o nome do contato a ser procurado (ou CANCELAR para desistir): ').strip()
     if nome.upper() == 'CANCELAR':
-        print()
-        print('\033[33mOpção cancelada!\033[m')
+        print('\n\033[33mOpção cancelada!\033[m')
         return
    
     achou, posicao = ondeEsta(nome, [p[0] for p in agd])  
@@ -174,7 +168,7 @@ def procurar(agd):
         print(f'Celular: {contato[4]}')
         print(f'E-mail: {contato[5]}')
     else:
-        print('\n\033[33mContato não encontrado\033[m')
+        print('\n\033[33mContato não encontrado, retornando ao menu\033[m')
 
 
 
@@ -190,13 +184,13 @@ def atualizar(agd):
 
     achou, posicao = ondeEsta(nome, [p[0] for p in agd])
     if not achou:
-        print('\n\033[33mContato não encontrado\033[m')
+        print('\n\033[33mContato não encontrado, retornando ao menu\033[m')
         return
 
     contato = agd[posicao]
     print(f"\n\033[32mContato encontrado!\033[m --> {contato[0]}\n")
 
-    telefone_regex = re.compile(r'^\(?(\d{2})\)?\s?\d{4}-?\d{4}$') 
+    telefone_regex = re.compile(r'^(?:\([1-9]{2}\) )?9?[0-9]{4}-[0-9]{4}$')
     celular_regex = re.compile(r'^\(?(\d{2})\)?\s?9\d{4}-?\d{4}$')
     email_regex = re.compile(r'^[\w\.-]+@[\w\.-]+\.\w{2,}$')
 
@@ -214,6 +208,7 @@ def atualizar(agd):
 
         if escolha == "1": 
             while True:
+                print('Aniversário cadastrado:', contato[1])
                 novo = input("Novo aniversário (DD/MM) ou CANCELAR: ").strip()
                 if novo.upper() == 'CANCELAR':
                     break
@@ -228,7 +223,7 @@ def atualizar(agd):
                                 print('Esse mês vai até dia 30.')
                             else:
                                 contato[1] = novo
-                                print('Aniversário atualizado.')
+                                print('\033[32mAniversário atualizado\033[m')
                                 break
                         else:
                             print('Dia ou mês fora do intervalo válido.')
@@ -239,50 +234,53 @@ def atualizar(agd):
 
         elif escolha == "2":
             while True:
+                print('Endereço cadastrado:', contato[2])
                 novo = input("Novo endereço (ou CANCELAR): ").strip()
                 if novo.upper() == 'CANCELAR':
                     break
                 if any(c.isalpha() for c in novo) and any(c.isdigit() for c in novo):
                     contato[2] = novo
-                    print('Endereço atualizado.')
+                    print('\033[32mEndereço atualizado\033[m')
                     break
                 else:
-                    print('Endereço deve conter letras e números.')
+                    print('Endereço deve conter letras e números')
 
         elif escolha == "3":
             while True:
-                novo = input("Novo telefone fixo (com DDD) ou CANCELAR: ").strip()
+                print('Telefone cadastrado:', contato[3])
+                novo = input("Novo telefone fixo ou CANCELAR: ").strip()
                 if novo.upper() == 'CANCELAR':
                     break
                 match = telefone_regex.match(novo)
-                if match and 11 <= int(match.group(1)) <= 99:
-                    contato[3] = novo
-                    print('Telefone atualizado.')
+                if match:
+                    print('\033[mTelefone atualizado\033[m')
                     break
                 else:
-                    print('Número inválido. Use DDD e 8 dígitos.')
+                    print('Número inválido. Utilieze --> () caso opte por colocar DDD e uso obrigatório de hífen --> - ')
 
         elif escolha == "4":
             while True:
+                print('Celular cadastrado:', contato[4])
                 novo = input("Novo celular (com DDD) ou CANCELAR: ").strip()
                 if novo.upper() == 'CANCELAR':
                     break
                 match = celular_regex.match(novo)
                 if match and 11 <= int(match.group(1)) <= 99:
                     contato[4] = novo
-                    print('Celular atualizado.')
+                    print('\033[32mCelular atualizado\033[m')
                     break
                 else:
                     print('Número inválido. Use DDD e 9 dígitos iniciando com 9.')
 
         elif escolha == "5":
             while True:
+                print('E-mail cadastrado:', contato[5])
                 novo = input("Novo e-mail ou CANCELAR: ").strip()
                 if novo.upper() == 'CANCELAR':
                     break
                 if email_regex.match(novo):
                     contato[5] = novo
-                    print('Email atualizado.')
+                    print('\033[32mEmail atualizado\033[m')
                     break
                 else:
                     print('E-mail inválido.')
@@ -325,21 +323,20 @@ def excluir(agd):
         nome = input('Digite o nome a ser excluído (ou digite CANCELAR para desistir): ').strip()
 
         if nome.upper() == "CANCELAR":
-            print()
-            print('\033[33mOpção cancelada!\033[m')
+            print('\n\033[33mOpção cancelada!\033[m')
             return
 
         achou, posicao = ondeEsta(nome, nomes)
 
         if achou:
             contato = agd[posicao]
-            print("\nContato encontrado:")
-            print("Nome:", contato[0])
-            print("Aniversário:", contato[1])
-            print("Endereço:", contato[2])
-            print("Telefone:", contato[3])
-            print("Celular:", contato[4])
-            print("Email:", contato[5])
+            print('\n\033[32mContato encontrado:\033[m\n')
+            print('Nome:', contato[0])
+            print('Aniversário:', contato[1])
+            print('Endereço:', contato[2])
+            print('Telefone:', contato[3])
+            print('Celular:', contato[4])
+            print('Email:', contato[5])
 
             confirmar = input('Tem certeza que deseja excluir este contato? [S/N]: ').strip().upper()
             if confirmar == 'S':
@@ -391,7 +388,7 @@ while True:
 
     print()
 
-print('\033[34mPrograma encerrado com sucesso! Até mais :)\033[m\n')
+print('\n\033[34mPrograma encerrado com sucesso! Até mais :)\033[m\n')
 
 
 
