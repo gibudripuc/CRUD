@@ -1,8 +1,6 @@
 import re
 
-print()
-print('ATIVIDADE CRUD')
-print()
+print('\nATIVIDADE CRUD\n')
 
 def apresenteSe ():
     print('+-------------------------------------------------------------+')
@@ -16,7 +14,7 @@ def apresenteSe ():
     print('+-------------------------------------------------------------+')
 
 
-
+#Solicita entrada de texto até que seja válido
 def umTexto (solicitacao, mensagem, valido):
     while True:
         txt=input(solicitacao)
@@ -26,7 +24,7 @@ def umTexto (solicitacao, mensagem, valido):
             break
     return txt
 
-
+#Faz uma lista com as opções disponíveis --> Exibe menu numerado com as opções
 def opcaoEscolhida(mnu):
     print()
 
@@ -38,7 +36,7 @@ def opcaoEscolhida(mnu):
     print()
     return umTexto('Qual é a sua opção? ', 'Opção inválida', opcoesValidas)
 
-
+#Busca binária para encontrar o nome na agenda
 def ondeEsta(nom, agd):
     inicio = 0
     final = len(agd) - 1
@@ -46,16 +44,20 @@ def ondeEsta(nom, agd):
     while inicio <= final:
         meio = (inicio + final) // 2
         if agd[meio] == nom:
+            #True = Nome encontrado/Meio =  posição que ele está
             return [True, meio]
         elif agd[meio] < nom:
             inicio = meio + 1
         else:
             final = meio - 1
 
+    #False = nome não encontrado/Inicio = posição que ele deveria estar
     return [False, inicio]
 
+#Cadastro dos contatos
 def cadastrar(agd):
-    nome_regex = re.compile(r'^[A-Z][a-z]*(?: (?:[A-Z]|[a-z])[a-z]*)*$')
+    #Validação RegEx
+    nome_regex = re.compile(r'^[A-Z][a-z]*(?: (?:[A-Z][a-z]*|de|da|do|dos|das))*$')
     telefone_regex = re.compile(r'^(?:\([1-9]{2}\) )?9?[0-9]{4}-[0-9]{4}$') 
     celular_regex = re.compile(r'^\(?(\d{2})\)?\s?9\d{4}-?\d{4}$')
     email_regex = re.compile(r'^[\w\.-]+@[\w\.-]+\.\w{2,}$')
@@ -66,8 +68,9 @@ def cadastrar(agd):
             print('\n\033[33mOpção cancelada!\033[m')
             return
         
+        #Se dar match = aceita
         if not nome_regex.match(nome):
-            print('Nome inválido. Por favor, digite um nome completo (apenas letras e espaços)')
+            print('Nome inválido. Por favor, digite um nome completo (apenas letras (iniciais maiúsculas) e espaços)')
             continue
 
         achou, posicao = ondeEsta(nome, [p[0] for p in agd])  
@@ -131,7 +134,7 @@ def cadastrar(agd):
             else:
                 print('DDD inválido.')
         else:
-            print('Número inválido. Deve conter DDD e 9 dígitos (começando com 9).')
+            print('Número inválido. Deve conter DDD e mais 9 dígitos (começando com 9).')
         
     while True:
         email = input('Email: ').strip()
@@ -140,13 +143,14 @@ def cadastrar(agd):
         else:
             print('Email inválido')
 
+    #Criação da listinha 'contatos'
     contato = [nome, aniversario, endereco, telefone, celular, email]
+    #Insere na agd (listona) o novo contato criado na posição 'posicao'
     agd.insert(posicao, contato)
 
-    print()
-    print('\033[32mCadastro realizado com sucesso!\033[m')
+    print('\n\033[32mCadastro realizado com sucesso!\033[m')
 
-
+#Procurar contato -- Usa função ondeEsta
 def procurar(agd):
     if not agd:
         print('\n\033[33mAgenda vazia --> Nenhum contato cadastrado para procurar\033[m')
@@ -157,7 +161,11 @@ def procurar(agd):
         print('\n\033[33mOpção cancelada!\033[m')
         return
    
-    achou, posicao = ondeEsta(nome, [p[0] for p in agd])  
+    #Achou = True/False
+    #Posicao = Meio/Início
+    #ondeEsta --> Nome é a primeira informação de contato (contato[0])
+    #Busca nos contatos o nome dado pelo usuário
+    achou, posicao = ondeEsta(nome, [contato[0] for contato in agd])  
     if achou:
         contato = agd[posicao]
         print(f'\n\033[32mContato encontrado!\033[m')
@@ -170,9 +178,16 @@ def procurar(agd):
     else:
         print('\n\033[33mContato não encontrado, retornando ao menu\033[m')
 
+    #Usamos umTexto para perguntar se o usuário quer fazer nova busca
+        nova_busca = umTexto('\nDeseja procurar outro contato? [S/N]: ', 'Digite S ou N', ['S', 'N'])
+        if nova_busca == 'N':
+            print('\n\033[33mEncerrando procura\033[m')
+            return
 
 
+#Atualizar contato -- Usa função ondeEsta
 def atualizar(agd):
+    #Agenda vazia = lista vazia = False
     if not agd:
         print('\n\033[33mAgenda vazia --> Nenhum cadastro para atualizar\033[m')
         return
@@ -181,15 +196,19 @@ def atualizar(agd):
     if nome.upper() == 'CANCELAR':
         print('\n\033[33mOpção cancelada!\033[m')
         return
-
-    achou, posicao = ondeEsta(nome, [p[0] for p in agd])
+    
+    #Busca o contato pelo nome na agenda usando busca binária
+    achou, posicao = ondeEsta(nome, [contato[0] for contato in agd])
+    #If not achou = False
     if not achou:
         print('\n\033[33mContato não encontrado, retornando ao menu\033[m')
         return
 
+    #A variável contato recebe a listinha com os dados do contato que está na posição 'posicao' dentro da listona principal 'agd'
     contato = agd[posicao]
     print(f"\n\033[32mContato encontrado!\033[m --> {contato[0]}\n")
 
+    #Validação RegEx
     telefone_regex = re.compile(r'^(?:\([1-9]{2}\) )?9?[0-9]{4}-[0-9]{4}$')
     celular_regex = re.compile(r'^\(?(\d{2})\)?\s?9\d{4}-?\d{4}$')
     email_regex = re.compile(r'^[\w\.-]+@[\w\.-]+\.\w{2,}$')
@@ -204,8 +223,10 @@ def atualizar(agd):
     ]
 
     while True:
+        #Garante que seja uma opção válida
         escolha = opcaoEscolhida(opcoes)
 
+        #Todas as validações feitas em 'cadastro' foram reutilizadas aqui:
         if escolha == "1": 
             while True:
                 print('Aniversário cadastrado:', contato[1])
@@ -223,7 +244,7 @@ def atualizar(agd):
                                 print('Esse mês vai até dia 30.')
                             else:
                                 contato[1] = novo
-                                print('\033[32mAniversário atualizado\033[m')
+                                print('\n\033[32mAniversário atualizado\033[m')
                                 break
                         else:
                             print('Dia ou mês fora do intervalo válido.')
@@ -240,7 +261,7 @@ def atualizar(agd):
                     break
                 if any(c.isalpha() for c in novo) and any(c.isdigit() for c in novo):
                     contato[2] = novo
-                    print('\033[32mEndereço atualizado\033[m')
+                    print('\n\033[32mEndereço atualizado\033[m')
                     break
                 else:
                     print('Endereço deve conter letras e números')
@@ -253,7 +274,8 @@ def atualizar(agd):
                     break
                 match = telefone_regex.match(novo)
                 if match:
-                    print('\033[mTelefone atualizado\033[m')
+                    contato[3] = novo
+                    print('\n\033[32mTelefone atualizado\033[m')
                     break
                 else:
                     print('Número inválido. Utilieze --> () caso opte por colocar DDD e uso obrigatório de hífen --> - ')
@@ -267,7 +289,7 @@ def atualizar(agd):
                 match = celular_regex.match(novo)
                 if match and 11 <= int(match.group(1)) <= 99:
                     contato[4] = novo
-                    print('\033[32mCelular atualizado\033[m')
+                    print('\n\033[32mCelular atualizado\033[m')
                     break
                 else:
                     print('Número inválido. Use DDD e 9 dígitos iniciando com 9.')
@@ -280,7 +302,7 @@ def atualizar(agd):
                     break
                 if email_regex.match(novo):
                     contato[5] = novo
-                    print('\033[32mEmail atualizado\033[m')
+                    print('\n\033[32mEmail atualizado\033[m')
                     break
                 else:
                     print('E-mail inválido.')
@@ -290,32 +312,34 @@ def atualizar(agd):
             break
 
 
- 
-
+#Lista todos os contatos em agenda
 def listar(agd):
+    #Se estiver vazia = False
     if not agd:
         print('\n\033[33mAgenda vazia --> Nenhum contato para listar\033[m')
         return
     
     else:
-        print()
-        print('\033[35mContatos cadastrados:\033[m')
+        print('\n\033[35mContatos cadastrados:\033[m')
+        #For percorre cada contato da lista agd e mostra cada um deles
         for contato in agd:
-            print("-" * 30)
+            print('-'*30)
             print(f"Nome: {contato[0]}")
             print(f"Aniversário: {contato[1]}")
             print(f"Endereço: {contato[2]}")
             print(f"Telefone fixo: {contato[3]}")
             print(f"Celular: {contato[4]}")
             print(f"Email: {contato[5]}")
-            print("-" * 30)
+            print('-'*30)
 
 
+#Exclui um contato através do nome -- Usa função ondeEsta
 def excluir(agd):
     if not agd:
         print('\n\033[33mAgenda vazia --> Nenhum contato para excluir\033[m')
         return
 
+    #Todos os nomes estão na posição 0 em 'contatos'
     nomes = [contato[0] for contato in agd]
 
     while True:
@@ -328,6 +352,7 @@ def excluir(agd):
 
         achou, posicao = ondeEsta(nome, nomes)
 
+        #Mostra informações do contato
         if achou:
             contato = agd[posicao]
             print('\n\033[32mContato encontrado:\033[m\n')
@@ -338,20 +363,15 @@ def excluir(agd):
             print('Celular:', contato[4])
             print('Email:', contato[5])
 
-            confirmar = input('Tem certeza que deseja excluir este contato? [S/N]: ').strip().upper()
+            #Pede confirmação antes de excluir -- Utiliza umTexto
+            confirmar = umTexto('Tem certeza que deseja excluir este contato? [S/N]: ', 'Digite S ou N', ['S', 'N'])
             if confirmar == 'S':
                 del agd[posicao]
-                print()
-                print('\033[33mContato excluído com sucesso\033[m')
-            elif confirmar == 'N':
-                print('\033[33mExclusão cancelada!\033[m')
+                print('\n\033[33mContato excluído com sucesso\033[m')
             else:
-                print()
-                print('\033[33mUsuário não digitou "S" e não digitou "N", o programa entendeu como exclusão cancelada\033[m')
-            return
+                print('\033[33mExclusão cancelada!\033[m\n')
         else:
-            print()
-            print('\033[33mContato não encontrado. Por favor, tente novamente\033[m')
+            print('\n\033[33mContato não encontrado. Por favor, tente novamente\033[m')
 
 
 apresenteSe()
@@ -366,6 +386,8 @@ menu = ['Cadastrar Contato',
 
 while True:
     try:
+        #A função opcaoEscolhida utiliza a lista 'menu' criada acima
+        #Valida as escolhas do usuário
         opcao = int(opcaoEscolhida(menu))
     except ValueError:
         print('Por favor, digite um número válido')
@@ -386,7 +408,7 @@ while True:
     else:
         print('Opção inválida. Por favor, tente novamente')
 
-    print()
+
 
 print('\n\033[34mPrograma encerrado com sucesso! Até mais :)\033[m\n')
 
